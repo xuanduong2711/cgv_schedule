@@ -21,34 +21,36 @@ Toàn bộ hệ thống được container hóa bằng **Docker Compose**, giúp
 
 ## 🏗️ Cấu trúc thư mục
 
-mini_prj/
-├── config/
-│ └── airflow.cfg
-├── dags/
-│ ├── test.py
-│ └── pycache/
-├── data/
-│ ├── cgv_movies.json
-│ ├── create_data.py
-│ ├── date_data.csv
-│ └── output/
-│ ├── part-00000-xxxx.csv
-│ └── _SUCCESS
-├── Docker/
-│ ├── airflow/
-│ │ ├── Dockerfile.airflow
-│ │ └── requirements.txt
-│ └── spark/
-│ ├── Dockerfile.spark
-│ └── requirements.txt
+```bash
+├── config
+│   └── airflow.cfg
+├── dags
+│   ├── __pycache__
+│   │   └── test.cpython-312.pyc
+│   └── test.py
+├── data
+│   ├── cgv_movies.json
+│   ├── create_data.py
+│   ├── date_data.csv
+│   └── output
+│       ├── part-00000-7b793965-3626-4efa-9679-73735a9c0e47-c000.csv
+│       └── _SUCCESS
+├── Docker
+│   ├── airflow
+│   │   ├── Dockerfile.airflow
+│   │   └── requirements.txt
+│   └── spark
+│       ├── Dockerfile.spark
+│       └── requirements.txt
 ├── docker-compose.yml
-├── logs/
-├── plugins/
-├── src/
-│ ├── crawl_data.py
-│ ├── transform.py
-│ └── b.py
-└── README.md
+├── logs
+├── plugins
+├── README.md
+└── src
+    ├── b.py
+    ├── crawl_data.py
+    └── transform.py
+
 
 
 ---
