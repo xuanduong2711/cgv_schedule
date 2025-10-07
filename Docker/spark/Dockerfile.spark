@@ -1,0 +1,28 @@
+# Dockerfile.spark
+FROM apache/spark:4.0.0-scala2.13-java17-ubuntu
+
+# Dùng root để cài Python + pip
+USER root
+
+# 1️⃣ Cài Python3 và pip
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends python3 python3-pip python3-distutils && \
+    ln -sf /usr/bin/python3 /usr/bin/python && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 2️⃣ Thiết lập JAVA_HOME (Spark cần)
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+# 3️⃣ Copy requirements và cài đặt các package cần thiết
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+# 4️⃣ User Spark (không cần airflow user)
+# Spark vẫn chạy bằng root trong dev, không ảnh hưởng production nhỏ
+# USER root
+
+# 5️⃣ Thư mục làm việc
+WORKDIR /opt/spark
+
+# 6️⃣ Entrypoint mặc định của Spark image vẫn giữ nguyên

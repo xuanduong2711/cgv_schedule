@@ -1,0 +1,64 @@
+FROM apache/airflow:3.1.0
+
+USER root
+
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    unzip \
+    curl \
+    netcat-traditional \
+    xvfb \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libatspi2.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxkbcommon0 \
+    libxrandr2 \
+    xdg-utils \
+    libu2f-udev \
+    libvulkan1 \
+    apt-transport-https \
+    ca-certificates \
+    lsb-release \
+    && apt-get autoremove -yqq --purge \
+    && apt-get install -y --no-install-recommends openjdk-17-jre-headless \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+# cài Chrome
+ENV CHROME_VERSION=141.0.7390.54
+ENV CHROME_FOR_TESTING_URL="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip"
+
+RUN wget -q "${CHROME_FOR_TESTING_URL}" -O /tmp/chrome-linux64.zip && \
+    unzip /tmp/chrome-linux64.zip -d /opt/chrome-for-testing/ && \
+    rm /tmp/chrome-linux64.zip
+
+# 2. Cài đặt ChromeDriver khớp phiên bản
+ENV CHROMEDRIVER_FOR_TESTING_URL="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip"
+
+RUN wget -q "${CHROMEDRIVER_FOR_TESTING_URL}" -O /tmp/chromedriver-linux64.zip && \
+    unzip /tmp/chromedriver-linux64.zip -d /tmp/chromedriver_extract/ && \
+    mv /tmp/chromedriver_extract/chromedriver-linux64/chromedriver /usr/local/bin/ && \
+    rm -rf /tmp/chromedriver_extract/ && \
+    rm /tmp/chromedriver-linux64.zip
+
+
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+
+USER airflow
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
