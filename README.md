@@ -52,7 +52,7 @@ Toàn bộ hệ thống được container hóa bằng **Docker Compose**, giúp
     ├── b.py
     ├── crawl_data.py
     └── transform.py
-
+---
 # 🚀 mini_prj — Airflow + Spark Integration Project
 
 ## ⚙️ Cách khởi chạy dự án
