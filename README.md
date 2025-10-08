@@ -114,7 +114,7 @@ SQL_SERVER=
 SQL_PORT=1433
 SQL_DB=
 SQL_USER=
-SQL_PASSWORD=
+SQL_PASSWORD= { pass phải trên 8 kí tự và bao gồm chữ hoa, thường, số và kí tự đặc biệt}
 STREAMLIT_PORT=8888
 ```
 
