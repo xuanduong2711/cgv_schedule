@@ -139,23 +139,42 @@ services:
       - "8083:8083"
 
   sqlserver:
+    container_name: mini_prj-sqlserver-1
     build:
       context: .
       dockerfile: Docker/mssql/Dockerfile.sqlserver
     ports:
       - "1433:1433"
+    env_file:
+      - .env 
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong!Passw0rd
-      - MSSQL_PID=Express
+      - SA_PASSWORD=${SQL_PASSWORD} 
+      - MSSQL_PID=Express 
     volumes:
-      - ./sql:/sql
+      - ./sql:/sql 
+      #- mssql-data:/var/opt/mssql 
     healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1" || exit 1
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${SQL_PASSWORD}" -Q "SELECT 1" || exit 1
       interval: 10s
       retries: 10
       start_period: 30s
       timeout: 5s
+
+  streamlit:
+    container_name: mini_prj-streamlit
+    build:
+      context: .
+      dockerfile: Docker/streamlit/Dockerfile.streamlit
+    ports:
+      - "${STREAMLIT_PORT}:${STREAMLIT_PORT}"
+    env_file:
+      - .env
+    # THÊM KHỐI NÀY VÀO:
+    volumes:
+      - ./data:/app/data 
+    depends_on:
+      - sqlserver
 
   airflow-apiserver:
     <<: *airflow-common

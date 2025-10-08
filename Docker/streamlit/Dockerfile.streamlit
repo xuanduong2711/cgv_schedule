@@ -1,25 +1,26 @@
 FROM python:3.12-slim
 
-# Set work directory
 WORKDIR /app
 
-# Copy requirements
-COPY requirements.txt .
-
-# Cài dependencies
+# Cài các package cần thiết cho ODBC + build
 RUN apt-get update && apt-get install -y \
-        gcc \
-        unixodbc-dev \
-        curl \
-    && pip install --no-cache-dir -r requirements.txt \
-    && apt-get clean \
+    curl gnupg2 ca-certificates lsb-release build-essential unixodbc-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy toàn bộ source code Streamlit vào container
-COPY . /app
+# Cài MS ODBC driver 18
+# Cài MS ODBC driver 18
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/microsoft-prod.gpg \
+    && curl https://packages.microsoft.com/config/debian/12/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql18 \
+    && rm -rf /var/lib/apt/lists/*
+# Copy source code
+COPY src/streamlit_app_db.py /app/streamlit_app_db.py
+COPY Docker/streamlit/requirements.txt /app/requirements.txt
+COPY src/init_db.py /app/init_db.py
+# Cài Python packages
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port Streamlit
-EXPOSE 8501
+EXPOSE 8888
 
-# Lệnh chạy Streamlit
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "streamlit_app_db.py", "--server.port=8888", "--server.address=0.0.0.0"]

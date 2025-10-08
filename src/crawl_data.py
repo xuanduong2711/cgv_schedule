@@ -77,7 +77,7 @@ for i in range(len(cinemas_list)):
 
 
 # Duyệt từng URL
-for url in urls:
+for url in urls[1:3]:
     driver.get(url)
     time.sleep(1.5)
     date_list = driver.find_elements(By.XPATH, "//*[contains(@id,'cgv20')]")

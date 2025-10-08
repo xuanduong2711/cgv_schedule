@@ -13,9 +13,6 @@ RUN apt-get update && apt-get install -y curl apt-transport-https gnupg \
 # Thêm sqlcmd vào PATH
 ENV PATH="$PATH:/opt/mssql-tools/bin"
 
-# Copy file SQL khởi tạo vào container
-COPY ./sql /sql
-
 # Copy entrypoint custom
 COPY ./Docker/mssql/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

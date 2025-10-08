@@ -1,2 +1,3 @@
 streamlit
 pyodbc  # nếu cần kết nối SQL Server
+python-dotenv
