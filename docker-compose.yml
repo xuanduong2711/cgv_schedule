@@ -138,13 +138,24 @@ services:
     ports:
       - "8083:8083"
 
-#  sqlserver:
-#    image: mcr.microsoft.com/mssql/server:2019-latest
-#    environment:
-#      ACCEPT_EULA: "Y"
-#      SA_PASSWORD: "an147258"
-#    ports:
-#      - "1433:1433"
+  sqlserver:
+    build:
+      context: .
+      dockerfile: Docker/mssql/Dockerfile.sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong!Passw0rd
+      - MSSQL_PID=Express
+    volumes:
+      - ./sql:/sql
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1" || exit 1
+      interval: 10s
+      retries: 10
+      start_period: 30s
+      timeout: 5s
 
   airflow-apiserver:
     <<: *airflow-common

@@ -1,0 +1,24 @@
+FROM mcr.microsoft.com/mssql/server:2019-latest
+
+USER root
+
+# Cài mssql-tools để có sqlcmd
+RUN apt-get update && apt-get install -y curl apt-transport-https gnupg \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Thêm sqlcmd vào PATH
+ENV PATH="$PATH:/opt/mssql-tools/bin"
+
+# Copy file SQL khởi tạo vào container
+COPY ./sql /sql
+
+# Copy entrypoint custom
+COPY ./Docker/mssql/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Đặt entrypoint custom thay vì default
+ENTRYPOINT ["/entrypoint.sh"]
